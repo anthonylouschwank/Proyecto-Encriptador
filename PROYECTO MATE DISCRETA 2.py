@@ -57,43 +57,28 @@ def generar_llaves(rango_inferior, rango_superior):
     Retorno:
         tuple: Una tupla con la clave pública (e, n) y la clave privada (d, n), o None si falla.
     """
-    # Generar dos números primos p y q
+
     p = generar_primo(rango_inferior, rango_superior)
     q = generar_primo(rango_inferior, rango_superior)
     
     if not p or not q or p == q:
-        return None  # Error: no se pueden generar dos números primos distintos
+        return None  
     
-    # Calcular n y phi(n)
     n = p * q
     phi = (p - 1) * (q - 1)
     
-    # Elegir e tal que 1 < e < phi y mcd(e, phi) = 1
     e = random.randint(2, phi - 1)
     while mcd(e, phi) != 1:
         e = random.randint(2, phi - 1)
     
-    # Calcular d como el inverso modular de e módulo phi
+
     d = inverso_modular(e, phi)
     if not d or d == e:
-        return None  # Error: no se pudo generar un d válido
+        return None  
     
-    # Retornar las claves pública y privada
     clave_publica = (e, n)
     clave_privada = (d, n)
     return clave_publica, clave_privada
-
-# Ejemplo de uso
-rango_inferior = 10
-rango_superior = 50
-
-llaves = generar_llaves(rango_inferior, rango_superior)
-if llaves:
-    clave_publica, clave_privada = llaves
-    print(f"Clave pública: {clave_publica}")
-    print(f"Clave privada: {clave_privada}")
-else:
-    print("No se pudieron generar las llaves en el rango especificado.")
 
 def encriptar(mensaje, clave_publica):
     """
@@ -109,29 +94,56 @@ def encriptar(mensaje, clave_publica):
     Excepciones:
         ValueError: Si el mensaje no es un número entero positivo o si no cumple M < n.
     """
-    # Desempaquetar la clave pública
+
     e, n = clave_publica
     
-    # Validar el mensaje
     if not isinstance(mensaje, int) or mensaje < 0:
         raise ValueError("El mensaje debe ser un número entero positivo.")
     if mensaje >= n:
         raise ValueError(f"El mensaje debe ser menor que n. Recibido: {mensaje}, n: {n}")
     
-    # Cifrar el mensaje
     # C = M^e mod n
     caracter_encriptado = pow(mensaje, e, n)
     return caracter_encriptado
 
+def desencriptar(mensaje_encriptado, clave_privada):
+    """
+    Desencripta un mensaje cifrado usando la clave privada de RSA.
+    
+    Parámetros:
+        mensaje_encriptado (int): El mensaje cifrado (C).
+        clave_privada (tuple): La clave privada (d, n).
+        
+    Retorno:
+        int: El mensaje desencriptado (M).
+        
+    Excepciones:
+        ValueError: Si el mensaje no es válido.
+    """
+
+    d, n = clave_privada
+    
+    if not isinstance(mensaje_encriptado, int) or mensaje_encriptado < 0:
+        raise ValueError("El mensaje debe ser un número entero positivo.")
+    if mensaje_encriptado >= n:
+        raise ValueError(f"El mensaje debe ser menor que n. Recibido: {mensaje_encriptado}, n: {n}")
+    
+    # M = c^d mod n
+    caracter_desencriptado = pow(mensaje_encriptado, d, n)
+    return caracter_desencriptado
+
+
 # Ejemplos de uso
 clave_publica_1 = (7, 221)
 mensaje_1 = 42
-print(f"Encriptar({mensaje_1}, {clave_publica_1}) = {encriptar(mensaje_1, clave_publica_1)}")  # Salida esperada: 196
+print(f"Encriptar({mensaje_1}, {clave_publica_1}) = {encriptar(mensaje_1, clave_publica_1)}")  # Salida esperada: 185
 
 clave_publica_2 = (5, 899)
 mensaje_2 = 15
-print(f"Encriptar({mensaje_2}, {clave_publica_2}) = {encriptar(mensaje_2, clave_publica_2)}")  # Salida esperada: 759
+print(f"Encriptar({mensaje_2}, {clave_publica_2}) = {encriptar(mensaje_2, clave_publica_2)}")  # Salida esperada: 619
 
-
+clave_privada_1 = (103,221)
+mensaje_encriptado_1 = 185
+print(f"Descencriptar({mensaje_encriptado_1}, {clave_privada_1}) = {desencriptar(mensaje_encriptado_1, clave_privada_1)}")  # Salida esperada: 42
 
 
