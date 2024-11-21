@@ -1,3 +1,18 @@
+####################################################################################################
+#
+#                     Proyecto 2
+#
+#   Nombre del programa: Proyecto-Encriptador
+#
+#
+#
+#   
+#   Estudiantes:
+#                  Anthony Lou Schwank - 23410
+#                  Francisco Martínez  - 23617
+#
+#
+####################################################################################################
 import random
 
 def es_primo(n):
@@ -133,17 +148,72 @@ def desencriptar(mensaje_encriptado, clave_privada):
     return caracter_desencriptado
 
 
-# Ejemplos de uso
-clave_publica_1 = (7, 221)
-mensaje_1 = 42
-print(f"Encriptar({mensaje_1}, {clave_publica_1}) = {encriptar(mensaje_1, clave_publica_1)}")  # Salida esperada: 185
+def menu():
+    """
+    Muestra un menú interactivo para usar las funciones del programa RSA.
+    """
+    while True:
+        print("\n--- Menú de Opciones ---")
+        print("1. Generar claves RSA")
+        print("2. Encriptar un mensaje")
+        print("3. Desencriptar un mensaje")
+        print("4. Ejemplos")
+        print("5. Salir")
+        
+        try:
+            opcion = int(input("Seleccione una opción (1-5): "))
+            if opcion == 1:
+                rango_inferior = int(input("Ingrese el rango inferior para los números primos: "))
+                rango_superior = int(input("Ingrese el rango superior para los números primos: "))
+                claves = generar_llaves(rango_inferior, rango_superior)
+                if claves:
+                    clave_publica, clave_privada = claves
+                    print(f"Clave pública: {clave_publica}")
+                    print(f"Clave privada: {clave_privada}")
+                else:
+                    print("No se pudieron generar claves con el rango dado. Intente con un rango más amplio.")
+            elif opcion == 2:
+                mensaje = int(input("Ingrese el mensaje a encriptar (un número entero positivo): "))
+                e = int(input("Ingrese el valor de e de la clave pública: "))
+                n = int(input("Ingrese el valor de n de la clave pública: "))
+                clave_publica = (e, n)
+                try:
+                    mensaje_encriptado = encriptar(mensaje, clave_publica)
+                    print(f"Mensaje encriptado: {mensaje_encriptado}")
+                except ValueError as ve:
+                    print(f"Error: {ve}")
+            elif opcion == 3:
+                mensaje_encriptado = int(input("Ingrese el mensaje encriptado (un número entero positivo): "))
+                d = int(input("Ingrese el valor de d de la clave privada: "))
+                n = int(input("Ingrese el valor de n de la clave privada: "))
+                clave_privada = (d, n)
+                try:
+                    mensaje_desencriptado = desencriptar(mensaje_encriptado, clave_privada)
+                    print(f"Mensaje desencriptado: {mensaje_desencriptado}")
+                except ValueError as ve:
+                    print(f"Error: {ve}")
+            elif opcion == 4:
+                print()
+                # Ejemplos de uso
+                clave_publica_1 = (7, 221)
+                mensaje_1 = 42
+                print(f"Encriptar({mensaje_1}, {clave_publica_1}) = {encriptar(mensaje_1, clave_publica_1)}")  # Salida esperada: 185
 
-clave_publica_2 = (5, 899)
-mensaje_2 = 15
-print(f"Encriptar({mensaje_2}, {clave_publica_2}) = {encriptar(mensaje_2, clave_publica_2)}")  # Salida esperada: 619
+                clave_publica_2 = (5, 899)
+                mensaje_2 = 15
+                print(f"Encriptar({mensaje_2}, {clave_publica_2}) = {encriptar(mensaje_2, clave_publica_2)}")  # Salida esperada: 619
 
-clave_privada_1 = (103,221)
-mensaje_encriptado_1 = 185
-print(f"Descencriptar({mensaje_encriptado_1}, {clave_privada_1}) = {desencriptar(mensaje_encriptado_1, clave_privada_1)}")  # Salida esperada: 42
+                clave_privada_1 = (103,221)
+                mensaje_encriptado_1 = 185
+                print(f"Descencriptar({mensaje_encriptado_1}, {clave_privada_1}) = {desencriptar(mensaje_encriptado_1, clave_privada_1)}")  # Salida esperada: 42
+            elif opcion == 5:
+                print("Saliendo del programa. ¡Hasta luego!")
+                break
+            else:
+                print("Opción no válida. Por favor, seleccione entre 1 y 5.")
+        except ValueError:
+            print("Entrada no válida. Por favor, ingrese un número entre 1 y 5.")
 
+# Llamada al menú
+menu()
 
